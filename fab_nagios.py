@@ -2,8 +2,8 @@
 #-*- coding:utf-8 -*-
 
 from fabric.api import *
-from fabric.context_managers import *
 from fabric.contrib.console import confirm
+from config import service
 
 src_dir="/Users/gmsjy/nagios/"
 nagi_dir="/opt/nagios/nagios"
@@ -15,29 +15,6 @@ env.password='mt5u#L9x'
 #   'monitors':[]
 #   'servers':[]
 #}
-
-
-@runs_once
-def tar_task():
-    with lcd(src_dir):
-        local("tar -zcf nagios-plugin.tar.gz nagios-plugin ")
-
-@task
-def put_task():
-    with settings(warn_only=True):
-        result = put("/User/gmsjy/nagios/nagios-plugin.tar.gz","/opt/nagios/nagios/")
-    if result.failed and not confirm("put file failed ,Continue[Y/N]"):
-        abort("Aborting file put task")
-
-@task
-def check_task():
-    with settings(warn_only=True):
-        lmd5 = local("md5sum %s/nagios-plugin.tar.gz" % src_dir,capture =True).split(' ')[0]
-        rmd5 = run("md5sum %s/nagios-plugin.tar.gz" % nagi_dir).split(' ')[0]
-    if lmd5 == rmd5:
-        print "OK"
-    else:
-        print "Error"
 
 @task
 def nrpe_start():
@@ -51,36 +28,36 @@ def nrpe_stop():
 def nrpe_restart():
     nrpe_stop()
     nrpe_start()
+    
+def writeService(serDict):
+    """trans dict to string"""
+    bufStr = "define service{\n"+\
+    "host name "+serDict['host_name']+"\n"\
+    "service_description "+serDict['service_description']+"\n"\
+    "check_command "+serDict['check_command']+"\n"\
+    "check_period "+serDict['check_period']+"\n"\
+    "max_check_attempts "+serDict['max_check_attempts']+"\n"\
+    "normal_check_interval "+serDict['normal_check_interval']+"\n"\
+    "retry_check_interval "+serDict['retry_check_interval']+"\n"\
+    "contact_groups "+serDict['contact_groups']+"\n"\
+    "notification_interval "+serDict['notification_interval']+"\n"\
+    "notification_period "+serDict['notification_period']+"\n"\
+    "notification_options "+serDict['notification_options']+"\n"\
+    "}"+"\n\n"
+    return bufStr
 
-@task 
-def nrpe_check():
-    nrpe_pid = run("pgrep nrpe")
-    if nrpe == "":
-        print "NRPE started failed!"
-    else:
-        print "NRPE is OK!"
 
-@task
-def plugin_update(name,dir):
-    with settings(warn_only=True):
-        result = put(dir+"/"+name,"~/")
-    if result.failed and not confirm("put file failed ,Continue[Y/N]"):
-        abort("Aborting file put task")
-    with cd("~/"):
-        run("chown -R nagios:nagios %s" % name)
-        run("chmod 755 %s" % name)
-        run("mv %s /opt/nagios/nagios/libexec/" % name)
 
-@task 
-def my_job():
-    plugin_update("check_celeryworker_timeout.sh","/Users/gmsjy/work/celery/")
+def add_server(newServer,newCommand):
+    """add servers to file"""
+    with open('./config/servers', 'a') as f:
+        f.write(newServer)
+    with open('./config/nrpe.cfg','a') as f:
+        f.write(newCommand)
+    
 
-        
-@task
-def install_nrpe():
-    with cd(nagi_dir):
-        run("tar -zxf ./nagios-plugin.tar.gz")
-        with cd(nagios-plugin):
-            run("/bin/bash nrpe-install.sh")
-    nrpe_start()
-    nrpe_check()
+if __name__ == "__main__":
+    serString = writeService(service)
+    serCommand = "command check /opt/nagios"
+    print(serString)
+    add_server(serString,serCommand)
