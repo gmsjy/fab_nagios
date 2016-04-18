@@ -1,0 +1,55 @@
+command[check_users]=/opt/nagios/nagios//libexec/check_users -w 20 -c 30
+command[check_load]=/opt/nagios/nagios//libexec/check_load -w 15,10,5 -c 30,25,20
+command[check_hda1]=/opt/nagios/nagios//libexec/check_disk -w 20% -c 10% -p /dev/hda1
+command[check_zombie_procs]=/opt/nagios/nagios//libexec/check_procs -w 5 -c 10 -s Z
+command[check_total_procs]=/opt/nagios/nagios//libexec/check_procs -w 1500 -c 2000
+command[check_http]=/opt/nagios/nagios//libexec/check_http -I $HOSTADDRESS$ $ARG1$
+command[check_ping]=/opt/nagios/nagios//libexec/check_ping -H $HOSTADDRESS$ -w $ARG1$ -c $ARG2$ -p 5
+
+command[check_disks]=/opt/nagios/nagios//libexec/check_disks.sh
+command[check_mysql]=/opt/nagios/nagios/libexec/check_mysql.sh
+command[check_mem]=/opt/nagios/nagios//libexec/check_mem  -u -w 90 -c 99
+command[check_swap]=/opt/nagios/nagios/libexec/check_swap -w 10% -c 5%
+command[check_load_one]=/opt/nagios/nagios/libexec/check_load_one.py
+command[check_tomcat]=/opt/nagios/nagios/libexec/check_tomcat
+command[check_hadoop_datanode]=/opt/nagios/nagios/libexec/check_hadoop_datanode.py  -w 18  -c 15
+command[check_hadoop_hbase]=/opt/nagios/nagios/libexec/check_hadoop_hbase.sh
+command[check_hadoop_tasktracker]=/opt/nagios/nagios/libexec/check_hadoop_tasktracker.py -w 18  -c 15
+command[check_hadoop_dfs]=/opt/nagios/nagios/libexec/check_hadoop_dfs.py
+command[check_LGeoEngine]=/opt/nagios/nagios//libexec/check_LGeoEngine
+command[check_DataCenter]=/opt/nagios/nagios//libexec/check_DataCenter
+command[check_glusterfs]=/opt/nagios/nagios/libexec/check_glusterfs /mnt/glusterfs/
+command[check_sphinx_web]=/opt/nagios/nagios//libexec/check_sphinx_web.sh
+
+# The following examples allow user-supplied arguments and can
+# only be used if the NRPE daemon was compiled with support for
+# command arguments *AND* the dont_blame_nrpe directive in this
+# config file is set to '1'.  This poses a potential security risk, so
+# make sure you read the SECURITY file before doing this.
+
+command[check_users]=/opt/nagios/nagios//libexec/check_users -w $ARG1$ -c $ARG2$
+command[check_load]=/opt/nagios/nagios//libexec/check_load -w $ARG1$ -c $ARG2$
+command[check_disk]=/opt/nagios/nagios//libexec/check_disk -w $ARG1$ -c $ARG2$ -p $ARG3$
+command[check_procs]=/opt/nagios/nagios//libexec/check_procs -w $ARG1$ -c $ARG2$ -s $ARG3$
+
+#add by lvan
+command[check_rabbitmq]=/opt/nagios/nagios/libexec/check_rabbitmq.sh
+command[check_redis]=/opt/nagios/nagios//libexec/check_redis.pl  -H 127.0.0.1 -p 6379
+command[check_memcached]=/opt/nagios/nagios/libexec/check_memcached -H 127.0.0.1 -p  11211
+
+command[check_pg_con]=/opt/nagios/nagios/libexec/check_postgres 127.0.0.1 cloudapi-engine postgres shining321 6190
+command[check_pg_queries]=/opt/nagios/nagios//libexec/check_pg_queries 127.0.0.1 cloudapi-engine   postgres shining321 5190
+command[check_celeworker]=/opt/nagios/nagios/libexec/check_celeryworker.sh
+command[check_mongodb]=/opt/ActivePython-2.7/bin/python /opt/nagios/nagios/libexec/check_mongodb.py
+command[check_twistd]=/opt/nagios/nagios/libexec/check_twistd
+command[check_authworker]=/opt/nagios/nagios/libexec/check_auth.sh
+command[check_ftp]=/opt/nagios/nagios/libexec/check_ftp.sh
+command[check_wsync]=/opt/nagios/nagios//libexec/check_wsync.sh
+command[check_ugc]=/opt/nagios/nagios//libexec/check_ugc.sh
+command[check_cpu]=/opt/nagios/nagios/libexec/check_cpu.sh
+command[check_postgres_con]=/opt/ActivePython-2.7/bin/python /opt/nagios/nagios/libexec/postgres_con.py
+command[check_env_one]=/opt/nagios/nagios/libexec/check_env.sh
+command[check_file_open]=/usr/bin/sudo /opt/nagios/nagios/libexec/check_file_open.sh
+
+command[check_iptables]=/opt/nagios/nagios/libexec/check_iptables.sh
+command[check_pgb]=/opt/nagios/nagios/libexec/check_pgb.sh
